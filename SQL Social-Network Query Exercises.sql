@@ -26,3 +26,23 @@ from(
     ) as temp2
 where count=2
 order by name1,name2;
+
+
+/*Find all students who do not appear in the Likes table (as a student who likes or is liked) and 
+return their names and grades. Sort by grade, then by name within each grade. */
+select name, grade
+from highschooler
+where id not in (select id1 from likes) and id not in (select id2 from likes)
+order by grade,name;
+        
+
+/*For every situation where student A likes student B, but we have no information about whom B 
+likes (that is, B does not appear as an ID1 in the Likes table), return A and B's names and grades. */
+select name1,grade1,name2,grade2
+from
+	(select h1.name as name1, h1.grade as grade1,ID1,ID2,h2.name as name2, h2.grade as grade2
+	from likes,highschooler as h1,highschooler as h2
+	where likes.ID1=h1.ID and likes.ID2=h2.ID) as t1
+where t1.ID2 not in (select ID1 from likes)
+
+
