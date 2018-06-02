@@ -43,6 +43,23 @@ from
 	(select h1.name as name1, h1.grade as grade1,ID1,ID2,h2.name as name2, h2.grade as grade2
 	from likes,highschooler as h1,highschooler as h2
 	where likes.ID1=h1.ID and likes.ID2=h2.ID) as t1
-where t1.ID2 not in (select ID1 from likes)
+where t1.ID2 not in (select ID1 from likes);
+
+
+
+/*Find names and grades of students who only have friends in the same grade. Return the result sorted 
+by grade, then by name within each grade. */
+select name1,grade1
+from(
+	select name1,grade1,min(grade2) as min2,max(grade2) as max2
+	from(
+		select h1.name as name1, h1.grade as grade1,ID1,ID2,h2.name as name2, h2.grade as grade2
+		from friend,highschooler as h1,highschooler as h2
+		where friend.ID1=h1.ID and friend.ID2=h2.ID
+        ) as temp
+	group by ID1
+    ) as temp1
+where grade1=min2 and grade1=max2
+order by grade1,name1;
 
 
