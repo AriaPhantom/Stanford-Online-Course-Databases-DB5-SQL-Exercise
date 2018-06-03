@@ -63,3 +63,34 @@ where grade1=min2 and grade1=max2
 order by grade1,name1;
 
 
+/*For each student A who likes a student B where the two are not friends, 
+find if they have a friend C in common (who can introduce them!). For all 
+such trios, return the name and grade of A, B, and C. */
+select h1.name, h1.grade, h2.name, h2.grade, h3.name, h3.grade
+from highschooler h1, highschooler h2, highschooler h3,
+	(select likes.id1, likes.id2, f1.id1 as id3 
+    from likes, friend f1, friend f2 
+    where not exists (
+					select friend.id1, friend.id2 
+					from friend
+					where friend.id1 = likes.id1 and friend.id2 = likes.id2)
+	and f1.id2 = likes.id1 
+	and f2.id2 = likes.id2 
+	and f1.id1 = f2.id1) as temp
+where h1.id = temp.id1 and h2.id = temp.id2 and h3.id = temp.id3;
+    
+
+/*Find the difference between the number of students in the school and 
+the number of different first names. */
+select (select count(id) from highschooler)-
+       (select count(distinct name) from highschooler) 
+       as difference;
+       
+/*Find the name and grade of all students who are liked by more than 
+one other student. */
+select name,grade
+from(
+	select count(id1) as followers,id2
+	from likes
+	group by id2) temp1,highschooler
+where temp1.followers>1 and highschooler.id=temp1.id2;
