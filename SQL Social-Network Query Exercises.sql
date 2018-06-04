@@ -1,5 +1,3 @@
-use demo2;
-
 /*Find the names of all students who are friends with someone named Gabriel.*/
 select name 
 from highschooler
